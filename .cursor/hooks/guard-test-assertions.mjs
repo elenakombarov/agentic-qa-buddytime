@@ -152,11 +152,11 @@ function main() {
   const payload = readHookInput();
   const { event, filePath, edits } = normalizeHookContext(payload);
   if (!filePath) {
-    process.exit(0);
+    allow(event);
   }
 
   if (!isTestFile(filePath)) {
-    process.exit(0);
+    allow(event);
   }
 
   const resolved = path.resolve(filePath);
