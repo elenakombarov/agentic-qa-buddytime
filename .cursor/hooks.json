@@ -1,9 +1,16 @@
 {
   "version": 1,
   "hooks": {
+    "preToolUse": [
+      {
+        "command": "node .cursor/hooks/guard-test-assertions.mjs",
+        "matcher": "Write|StrReplace|Delete",
+        "failClosed": true
+      }
+    ],
     "afterFileEdit": [
       {
-        "command": ".cursor/hooks/guard-test-assertions.sh",
+        "command": "node .cursor/hooks/guard-test-assertions.mjs",
         "matcher": "Write",
         "failClosed": true
       }
