@@ -1,0 +1,29 @@
+{
+  "name": "agentic-qa-buddytime",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elenakombarov/agentic-qa-buddytime.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/elenakombarov/agentic-qa-buddytime/issues"
+  },
+  "homepage": "https://github.com/elenakombarov/agentic-qa-buddytime#readme",
+  "dependencies": {
+    "@faker-js/faker": "^10.6.0",
+    "@playwright/test": "^1.63.0",
+    "dotenv": "^18.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3"
+  }
+}
