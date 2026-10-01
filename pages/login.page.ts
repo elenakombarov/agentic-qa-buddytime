@@ -11,8 +11,8 @@ export class LoginPage {
 
   constructor(private readonly page: Page) {
     this.heading = page.getByRole('heading', { name: 'Welcome back' });
-    this.emailInput = page.getByLabel('Email');
-    this.passwordInput = page.getByLabel('Password');
+    this.emailInput = page.getByRole('textbox', { name: 'Email' });
+    this.passwordInput = page.getByRole('textbox', { name: 'Password' });
     this.logInButton = page.getByRole('button', { name: 'Log in', exact: true });
     this.signUpLink = page.getByRole('link', { name: 'Sign up', exact: true });
     this.forgotPasswordLink = page.getByRole('link', {
