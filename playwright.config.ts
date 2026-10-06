@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import path from 'path';
 import { defineConfig } from '@playwright/test';
 import { AUTH_FILE } from './support/auth.constants';
 
@@ -6,10 +7,16 @@ dotenv.config();
 
 export default defineConfig({
   testDir: './tests',
+  globalSetup: path.join(__dirname, 'global-setup.ts'),
+  globalTeardown: path.join(__dirname, 'global-teardown.ts'),
   timeout: 30000,
   fullyParallel: true,
   retries: process.env.CI ? 2 : 0,
-  reporter: [['html', { open: 'never' }]],
+  reporter: [
+    ['html', { open: 'never' }],
+    ['list'],
+    [path.join(__dirname, 'support/reporters/cleanup-reporter.ts')],
+  ],
   use: {
     baseURL: process.env.APP_URL,
     headless: true,
