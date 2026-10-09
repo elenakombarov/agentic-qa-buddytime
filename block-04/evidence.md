@@ -96,3 +96,50 @@ No Playwright specs written or executed for this discovery task.
 ### explore-and-generate skill invocation
 
 On the **initial** request (“What flows in BuddyTime are we not testing?”), the tool log shows only a **partial** `Read` of `.cursor/skills/explore-and-generate/SKILL.md` (`limit: 80`), not a full-file read, and no live browser crawl. **Automatic skill invocation is not confirmed** for that turn. The P18 verification turn performed a full skill read and MCP exploration.
+
+## P20 — Exploratory charter (exploratory-charter)
+
+### Verification prompt — feature and risk supplied (exact)
+
+```
+Write an exploratory charter for BuddyTime sidebar navigation. The risk is that clicking a sidebar link opens the wrong page.
+Do not commit or push.
+Show the complete saved charter.
+```
+
+### Verification prompt — missing risk (exact)
+
+```
+Write an exploratory charter for BuddyTime availability.
+Do not commit or push.
+```
+
+### Created charter (feature + risk path)
+
+File: `charters/buddytime-sidebar-navigation.md`
+
+| Check | Result |
+|-------|--------|
+| Feature preserved | `BuddyTime sidebar navigation` |
+| Risk preserved | `Clicking a sidebar link opens the wrong page` |
+| Optional fields (Time box, In scope, Out of scope, Ticket) | Empty |
+| Mission | Blank |
+| Oracles (human) | Blank |
+| Areas to probe (human) | Blank |
+| Findings table | Header row only (no data rows) |
+
+### Missing-risk response
+
+When only **BuddyTime availability** was named (no risk), the agent read `.cursor/skills/exploratory-charter/SKILL.md`, asked the human for a **risk** before writing a file, and did **not** create `charters/buddytime-availability.md`.
+
+### Availability charter absent
+
+`charters/buddytime-availability.md` — **does not exist** (verified on disk).
+
+### Specs, exploration, and commits
+
+No Playwright specs written or run. No app exploration for this skill verification. No commit or push for P20 verification turns.
+
+### exploratory-charter skill invocation
+
+P20 verification turns: tool log shows explicit `Read` of `.cursor/skills/exploratory-charter/SKILL.md` before responding in both the sidebar-navigation and missing-risk chats.
