@@ -12,7 +12,19 @@ There is **no** [`support/api-client.ts`](../../../support/) in this repository.
 
 ## When to run
 
-Only when the user **explicitly** invokes this skill (e.g. `/test-data-reset`) after an interrupted run left tracked records behind. Plain-language requests like “clean up the test data” must **not** auto-run this skill — confirm intent and name the skill first.
+Only when the user **explicitly** invokes this skill (e.g. `/test-data-reset`, or names `test-data-reset` after you ask which skill they mean) after an interrupted run left tracked records behind.
+
+## Plain-language “clean up test data” (not this skill)
+
+Requests such as “clean up the test data” overlap with [`api-cleanup`](../api-cleanup/SKILL.md) (fixture/global teardown during tests), not this destructive reset utility.
+
+For those requests:
+
+- **Do not** read this skill file or run [`reset-test-data.ts`](scripts/reset-test-data.ts) — **including `--dry-run`** — unless the user explicitly invokes **test-data-reset** / `/test-data-reset` in the same thread.
+- Explain that routine test cleanup is handled by [`fixtures/cleanup.fixture.ts`](../../../fixtures/cleanup.fixture.ts), [`global-teardown.ts`](../../../global-teardown.ts), and [`support/reporters/cleanup-reporter.ts`](../../../support/reporters/cleanup-reporter.ts).
+- If they only need an inventory, read [`.test-artifacts/created-records.jsonl`](../../../.test-artifacts/created-records.jsonl) in the editor or describe its contents — do not shell out to the reset script.
+
+If they want tracked records deleted after an interrupted run, ask them to confirm and name **`/test-data-reset`** before continuing with the steps below.
 
 ## Steps
 
