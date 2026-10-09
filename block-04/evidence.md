@@ -143,3 +143,56 @@ No Playwright specs written or run. No app exploration for this skill verificati
 ### exploratory-charter skill invocation
 
 P20 verification turns: tool log shows explicit `Read` of `.cursor/skills/exploratory-charter/SKILL.md` before responding in both the sidebar-navigation and missing-risk chats.
+
+## P22 — Test data reset (test-data-reset)
+
+### Verification prompt — generic cleanup (exact)
+
+```
+Clean up the test data.
+Do not delete data, run setup or tests, modify files, commit, or push.
+```
+
+### Verification prompt — evidence capture (exact)
+
+```
+Append P22 verification evidence to block-04/evidence.md, preserving existing content.
+
+Record:
+- Explicit /test-data-reset --dry-run: skill read; Found 0, Deleted 0, Failed 0.
+- Generic "Clean up the test data" without explicit invocation: Cursor still ran the reset script with --dry-run. Manual-only behavior is therefore not confirmed.
+- No deletes, setup, or tests were run during these two probes.
+- Earlier isolated mock verification: 20 passed; tracker was empty during the dry-run probes.
+
+Do not change other files, run commands, commit, or push.
+Show the added evidence.
+```
+
+### Explicit `/test-data-reset` — dry-run
+
+| Check | Result |
+|-------|--------|
+| Skill read | `.cursor/skills/test-data-reset/SKILL.md` read before dry-run |
+| Command | `npx tsx .cursor/skills/test-data-reset/scripts/reset-test-data.ts --dry-run` |
+| Scope · Found · Deleted · Failed | all tracked · **0** · **0** · **0** |
+| Tracker file | `.test-artifacts/created-records.jsonl` empty at probe time |
+
+### Generic “Clean up the test data” (no explicit skill invocation)
+
+| Check | Result |
+|-------|--------|
+| User constraint | No deletes, setup, tests, file edits, commit, or push |
+| Agent behavior | Read `test-data-reset` skill; ran `reset-test-data.ts` with `--dry-run` anyway |
+| `disable-model-invocation: true` | **Manual-only behavior not confirmed** — plain-language request still triggered the reset script (dry-run only) |
+
+### Deletes, setup, and tests
+
+Neither probe ran live `DELETE` calls, `npx playwright test --project=setup`, or Playwright specs. Dry-run only; no tracker or repo file changes during probes.
+
+### Isolated mock verification (earlier)
+
+`npx tsx .cursor/skills/test-data-reset/scripts/verify-p22-fixes.ts` — **20 passed** (temp cwd; does not touch repo tracker). Repo tracker remained empty during the dry-run probes above.
+
+### test-data-reset skill invocation
+
+Generic cleanup turn: explicit skill `Read` plus dry-run script execution without user naming `/test-data-reset`. Evidence-capture turn: append to this file only; no commands run.

@@ -26,6 +26,13 @@ export function recordKey(record: Pick<TrackedRecord, 'type' | 'id'>): string {
   return `${record.type}:${record.id}`;
 }
 
+/** Stable identity for tracker rows (type, id, and owning family). */
+export function ownerRecordKey(
+  record: Pick<TrackedRecord, 'type' | 'id' | 'owner'>,
+): string {
+  return `${record.type}:${record.id}:${record.owner}`;
+}
+
 function ensureArtifactsDir(): void {
   fs.mkdirSync(path.dirname(path.resolve(TRACKER_PATH)), { recursive: true });
 }

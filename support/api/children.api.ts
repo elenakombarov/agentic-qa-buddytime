@@ -54,11 +54,13 @@ export async function deleteChild(
 export async function tryDeleteChild(
   api: APIRequestContext,
   childId: string,
-): Promise<{ ok: true } | { ok: false; status: number }> {
+): Promise<
+  { ok: true; status: 204 | 404 } | { ok: false; status: number }
+> {
   const response = await api.delete(`/api/v1/children/${childId}`);
   const status = response.status();
   if (status === 204 || status === 404) {
-    return { ok: true };
+    return { ok: true, status: status as 204 | 404 };
   }
   return { ok: false, status };
 }
