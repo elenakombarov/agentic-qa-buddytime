@@ -3,7 +3,7 @@ description: Always-on Playwright constitution — non-negotiables, preferences,
 alwaysApply: true
 ---
 
-Non-negotiables for every task. Details and examples: playwright-conventions.mdc (tests) and qa-orchestrator.mdc (ticket/CI workflow) — both added later.
+Non-negotiables for every task. Details and examples: playwright-conventions.mdc (tests) and qa-orchestrator.mdc (ticket/CI workflow).
 
 ## MUST
 
@@ -39,9 +39,24 @@ Non-negotiables for every task. Details and examples: playwright-conventions.mdc
 
 ## Index
 
-**Skills** (`.cursor/skills/`): api-cleanup, ci-failure-triage, eval-report, explore-and-generate, exploratory-charter, jira-bug-reporter, jira-ticket-analyzer, pom-conventions, self-heal, test-data-reset
+**Skills** (`.cursor/skills/`):
 
-**Agents** (`.cursor/agents/`): test-writer
+- api-cleanup — teardown created records
+- ci-failure-triage — classify red runs
+- eval-report — refresh suite metrics
+- explore-and-generate — find untested flows
+- exploratory-charter — format session charters
+- jira-bug-reporter — draft defect tickets
+- jira-ticket-analyzer — ticket to Gherkin
+- pom-conventions — page object rules
+- self-heal — repair locator drift
+- test-data-reset — delete leftover records
+
+**Agents** (`.cursor/agents/`):
+
+- bug-reporter — file confirmed bugs
+- test-writer — write Playwright specs
+- triage — classify failed runs
 
 ## Agent governance
 
