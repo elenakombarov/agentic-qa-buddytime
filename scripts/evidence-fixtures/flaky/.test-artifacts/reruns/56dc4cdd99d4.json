@@ -1,0 +1,24 @@
+{
+  "suites": [
+    {
+      "title": "case.txt",
+      "file": "tests/case.txt",
+      "specs": [
+        {
+          "title": "widget shows the name",
+          "ok": true,
+          "tests": [
+            {
+              "status": "expected",
+              "results": [
+                {
+                  "status": "passed"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

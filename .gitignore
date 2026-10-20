@@ -1,6 +1,12 @@
 node_modules/
 playwright/.auth/
 .test-artifacts/
+
+# Fixture re-runs are scorer inputs. Decision files are local output.
+!scripts/evidence-fixtures/**/.test-artifacts/
+!scripts/evidence-fixtures/**/.test-artifacts/reruns/
+!scripts/evidence-fixtures/**/.test-artifacts/reruns/**
+scripts/evidence-fixtures/**/.test-artifacts/decisions/
 test-results/
 playwright-report/
 blob-report/

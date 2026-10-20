@@ -1,0 +1,55 @@
+{
+  "test": {
+    "file": "tests/case.txt",
+    "title": "widget shows the name"
+  },
+  "items": [
+    {
+      "id": "R1",
+      "kind": "failure",
+      "artifact": "logs/failure.txt",
+      "line": 1,
+      "excerpt": "Expected heading to be visible"
+    },
+    {
+      "id": "R2",
+      "kind": "test_location",
+      "artifact": "tests/case.txt",
+      "line": 1,
+      "excerpt": "widget shows the name"
+    },
+    {
+      "id": "R3",
+      "kind": "pom_location",
+      "artifact": "pages/widget.page.ts",
+      "line": 5,
+      "excerpt": "getByRole('heading'"
+    },
+    {
+      "id": "R4",
+      "kind": "rerun",
+      "artifact": "tests/case.txt"
+    },
+    {
+      "id": "N",
+      "kind": "oracle_neutral",
+      "artifact": "logs/neutral.txt",
+      "line": 1,
+      "excerpt": "oracle neutral note about"
+    },
+    {
+      "id": "D2",
+      "kind": "pom_changed",
+      "artifact": "pages/widget.page.ts",
+      "line": 5,
+      "excerpt": "this.heading = page.getByRole"
+    },
+    {
+      "id": "D3",
+      "kind": "locator_error",
+      "artifact": "logs/locator.txt",
+      "line": 1,
+      "excerpt": "locator error waiting for"
+    }
+  ]
+}

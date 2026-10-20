@@ -1,0 +1,43 @@
+{
+  "test": {
+    "file": "tests/case.txt",
+    "title": "widget shows the name"
+  },
+  "items": [
+    {
+      "id": "R1",
+      "kind": "failure",
+      "artifact": "logs/failure.txt",
+      "line": 1,
+      "excerpt": "Expected heading to be visible"
+    },
+    {
+      "id": "R2",
+      "kind": "test_location",
+      "artifact": "tests/case.txt",
+      "line": 1,
+      "excerpt": "widget shows the name"
+    },
+    {
+      "id": "R3",
+      "kind": "pom_location",
+      "artifact": "pages/widget.page.ts",
+      "line": 5,
+      "excerpt": "getByRole('heading'"
+    },
+    {
+      "id": "D1",
+      "kind": "snapshot_mismatch",
+      "artifact": "logs/snapshot.txt",
+      "line": 1,
+      "excerpt": "snapshot mismatch on heading"
+    },
+    {
+      "id": "D4",
+      "kind": "probe_unique",
+      "artifact": "logs/probe.txt",
+      "line": 1,
+      "excerpt": "probe unique heading text"
+    }
+  ]
+}

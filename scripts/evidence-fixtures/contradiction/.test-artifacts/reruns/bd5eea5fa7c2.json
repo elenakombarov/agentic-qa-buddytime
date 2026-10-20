@@ -1,0 +1,27 @@
+{
+  "suites": [
+    {
+      "title": "case.txt",
+      "file": "tests/case.txt",
+      "specs": [
+        {
+          "title": "widget shows the name",
+          "ok": false,
+          "tests": [
+            {
+              "status": "unexpected",
+              "results": [
+                {
+                  "status": "failed",
+                  "error": {
+                    "message": "Expected heading to be visible\nLocator: heading"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

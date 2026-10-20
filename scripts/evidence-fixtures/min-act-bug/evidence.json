@@ -1,0 +1,41 @@
+{
+  "test": {
+    "file": "tests/case.txt",
+    "title": "widget shows the name"
+  },
+  "items": [
+    {
+      "id": "R1",
+      "kind": "failure",
+      "artifact": "logs/failure.txt",
+      "line": 1,
+      "excerpt": "Expected heading to be visible"
+    },
+    {
+      "id": "R2",
+      "kind": "test_location",
+      "artifact": "tests/case.txt",
+      "line": 1,
+      "excerpt": "widget shows the name"
+    },
+    {
+      "id": "R4",
+      "kind": "rerun",
+      "artifact": "tests/case.txt"
+    },
+    {
+      "id": "B1",
+      "kind": "ac_contradiction",
+      "artifact": "features/criteria.md",
+      "line": 1,
+      "excerpt": "acceptance criteria require"
+    },
+    {
+      "id": "B3",
+      "kind": "control_present",
+      "artifact": "pages/widget.page.ts",
+      "line": 5,
+      "excerpt": "getByRole('heading'"
+    }
+  ]
+}
