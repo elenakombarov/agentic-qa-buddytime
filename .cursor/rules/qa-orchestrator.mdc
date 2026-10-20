@@ -17,8 +17,8 @@ Drive a QA task to done by delegating. The only work you do yourself is read the
 
 ## Guardrails
 
-- A human approves every merge and every bug before it is filed.
-- Stop and escalate if a run fails identically twice, or if triage cannot classify.
+- A human approves every merge. A bug is filed only when the scorer returns `act` with side `bug`, or `escalate` and a human approval file exists.
+- Stop when the scorer returns inconclusive, or when the same failure is scored twice.
 - Never merge, transition, or close a ticket or PR without explicit approval.
 
 ## Loop guard
@@ -37,9 +37,9 @@ Atlassian MCP (Jira and Confluence), GitHub MCP or `gh`, the terminal (`npx play
 |---|---|
 | jira-ticket-analyzer | Analyze a ticket into a plan |
 | explore-and-generate | Ticket-less discovery only |
-| ci-failure-triage | Via the triage agent |
-| self-heal | Drift only, after triage |
-| jira-bug-reporter | Via the bug-reporter agent |
+| ci-failure-triage | Via the triage agent; it writes the evidence file and runs the scorer |
+| self-heal | Scorer `act` + side `drift`, or `escalate` with a human approval file |
+| jira-bug-reporter | Scorer `act` + side `bug`, or `escalate` with a human approval file |
 | api-cleanup | Specs that create records |
 | pom-conventions | Any POM or spec work you delegate |
 | eval-report | Mandatory before Done when a trigger fired |
@@ -50,17 +50,18 @@ Atlassian MCP (Jira and Confluence), GitHub MCP or `gh`, the terminal (`npx play
 
 **No ticket:** explore-and-generate → save the plan to `features/explore-<slug>.feature.md` → test-writer.
 
-Example: `AQPBT-3` → `features/AQPBT-3.feature.md` → test-writer → `npx playwright test`. A red run is triaged before anyone edits.
+Example: `AQPBT-3` → `features/AQPBT-3.feature.md` → test-writer → `npx playwright test`. A red run is scored before anyone edits.
 
 ## Heal on red
 
-Always triage first.
+Triage writes the evidence file and runs `npx tsx scripts/score-evidence.ts --verify-only .test-artifacts/evidence/current.json`. Route on that decision. A label in chat is not a route.
 
-| Classification | Action |
+| Decision | Action |
 |---|---|
-| Real app bug | bug-reporter. Never heal |
-| Drift | self-heal: re-discover via the accessibility snapshot, patch the POM only, re-run green with assertions unchanged, open repair PR `heal/<desc>`, never merge |
-| Ambiguous | Stop and escalate |
+| `act` + side `drift` | self-heal: re-discover via the accessibility snapshot, patch the POM only, re-run green with assertions unchanged, open repair PR `heal/<desc>`, never merge |
+| `act` + side `bug` | bug-reporter draft |
+| `escalate` | Show the evidence table (artifact, line, excerpt) and wait for a human approval file `.test-artifacts/approvals/<decisionId>.json` |
+| `inconclusive` | Stop and list what is missing or contradicting |
 
 Hard stops: never touch an assertion (the guard hooks enforce it). Stop if green needs an assertion change, or the same locator error persists after the POM patch.
 
@@ -80,4 +81,4 @@ Apply `eval-report` when any of its triggers fired this session, and commit the 
 |---|---|
 | Single ticket | Plan saved, spec delegated, and the run is green, a repair PR is open, or a human-approved bug is filed. No merge and no ticket close |
 | Backlog | One open PR for the one ticket, key linked in the body, `tests-generated` applied. Identical failure twice: PR stays open, label omitted, escalated. No merge, transition, or close |
-| Red-run heal | Triage recorded. Drift → unmerged `heal/<desc>` PR, POM-only, assertions unchanged, re-run green. Real bug → filed only after human approval. Ambiguous → stopped, nothing filed or healed |
+| Red-run heal | Scorer decision recorded. `act` + drift → unmerged `heal/<desc>` PR, POM-only, assertions unchanged, re-run green. `act` + bug → bug-reporter draft. `escalate` → evidence table shown, waiting on a human approval file. `inconclusive` → stopped, missing and contradicting items listed |

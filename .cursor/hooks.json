@@ -11,6 +11,32 @@
         "command": "node .cursor/hooks/guard-constitution.mjs",
         "matcher": "Write|StrReplace|Delete",
         "failClosed": true
+      },
+      {
+        "command": "node .cursor/hooks/guard-heal-gate.mjs",
+        "matcher": "Write",
+        "failClosed": true,
+        "timeout": 60
+      },
+      {
+        "command": "node .cursor/hooks/guard-approvals.mjs",
+        "matcher": "Write",
+        "failClosed": true,
+        "timeout": 60
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": "node .cursor/hooks/guard-pr-gate.mjs",
+        "failClosed": true,
+        "timeout": 60
+      }
+    ],
+    "beforeMCPExecution": [
+      {
+        "command": "node .cursor/hooks/guard-jira-bug-gate.mjs",
+        "failClosed": true,
+        "timeout": 60
       }
     ],
     "afterFileEdit": [

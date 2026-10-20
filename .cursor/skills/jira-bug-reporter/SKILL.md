@@ -1,17 +1,27 @@
 ---
 name: jira-bug-reporter
-description: Analyzes Playwright test failures, identifies root cause, and creates detailed Jira bug tickets. Use when a test fails and needs investigation and bug reporting.
+description: Analyzes Playwright test failures, identifies root cause, and creates detailed Jira bug tickets. Use when scripts/score-evidence.ts returns act with side bug, or escalate and a human approval file exists. A triage label is not enough.
 ---
 
 # Jira Bug Reporter (Playwright failures)
 
-Investigate a red Playwright run, decide product bug vs test/drift, and draft a Jira Bug for human approval before filing.
+Investigate a red Playwright run and draft a Jira Bug. File it only when the scorer allows this side.
+
+## Prerequisite
+
+The stdout of `npx tsx scripts/score-evidence.ts --verify-only .test-artifacts/evidence/current.json`. A triage label is not a prerequisite.
+
+| Decision | Action |
+|----------|--------|
+| `act` and side `bug` | Draft, then file with `createJiraIssue` and `issueType` `Bug` |
+| `escalate`, and `.test-artifacts/approvals/<decisionId>.json` exists | Draft, then file. That file is created by a human, by hand |
+| Anything else | Stop. Do not file |
 
 ## Workflow
 
 1. **Read the failure** — assertion message, stack trace, and artifact paths (screenshot, trace, video if present) under `test-results/` and the HTML report. Note the spec file, test title, and tag.
-2. **Confirm it reproduces** — re-run the failing test once (same project/browser as the failure when possible). If the re-run is green, treat as flake or environment drift; do not file a product bug without a second red run or clear product evidence.
-3. **Identify root cause** — read the spec, fixtures, and page objects involved; infer app behavior from the UI and network (BuddyTime application source is not available in this repo—describe observable behavior precisely). Classify: **product defect** (file bug), **test drift** (fix test/heal skill), **data/setup** (fix factories or auth), **flake** (stabilize or quarantine—do not file as Bug).
+2. **Confirm it reproduces** — re-run the failing test once (same project/browser as the failure when possible). A passing re-run is inconclusive, not drift. Do not file.
+3. **Identify root cause** — read the spec, fixtures, and page objects involved; infer app behavior from the UI and network (BuddyTime application source is not available in this repo—describe observable behavior precisely). The filing decision is the scorer's, not a label from this step.
 4. **Search for duplicates** — in Jira project `JIRA_PROJECT_KEY`, search for similar **open** bugs before drafting a new one (summary/text keywords from the failure and user-facing symptom).
 5. **Draft the bug** (markdown in chat) with these fields:
    - **Title** — specific, user-impact focused
@@ -24,7 +34,7 @@ Investigate a red Playwright run, decide product bug vs test/drift, and draft a 
    - **Evidence** — relative paths to screenshot and trace (and video if any)
    - **Playwright error** — exact assertion/timeout message
    - **Linked story** — originating ticket key (e.g. `AQPBT-N`)
-6. **Human gate** — show the full draft. File with the Atlassian MCP **only after explicit approval**, and link the new bug to the originating story.
+6. **File** — show the full draft. File with `createJiraIssue` only when the prerequisite table allows it, and link the new bug to the originating story. The issue type name in project `AQPBT` is `Bug`.
 
 ## Configuration (read from environment)
 
@@ -44,18 +54,18 @@ Never read or paste `APP_USER_EMAIL`, `APP_USER_PASSWORD`, `APP_ALT_*`, `ATLASSI
 2. Load the originating story with `getJiraIssue` (acceptance criteria, links).
 3. If the story references Confluence in `CONFLUENCE_SPACE_KEY`, use `getConfluenceContent` or `searchConfluence` for Expected behavior.
 4. Duplicate check: `searchJiraIssuesUsingJql` with JQL along the lines of `project = "<JIRA_PROJECT_KEY>" AND type = Bug AND statusCategory != Done AND (text ~ "…" OR summary ~ "…")` — adjust keywords from the failure.
-5. After approval: `createJiraIssue` (Bug) with description assembled from the draft; link to the originating story. If linking requires a separate operation, use `discover` and the appropriate `executeWrite` only with operations returned by `discover`.
+5. When the prerequisite allows it: `createJiraIssue` with `issueType` `Bug` and the description assembled from the draft; link to the originating story. If linking requires a separate operation, use `discover` and the appropriate `executeWrite` only with operations returned by `discover`.
 
 ## Rules
 
-- Never file for a **test issue** (wrong locator, bad data, missing skip) or a **green** run.
+- Never file unless the scorer returned **act** with side **bug**, or **escalate** and the approval file exists. A passing re-run is inconclusive.
 - Redact credentials, tokens, cookies, and account emails from errors and evidence before sharing; replace sensitive values with `[REDACTED]`. Never attach artifacts containing secrets.
 - Never include **credentials** or storageState secrets in Jira or chat output.
 - Do not weaken or delete assertions to “verify” the bug—triage per [constitution](../../rules/constitution.mdc).
 
 ## Do not (unless the user asks)
 
-- File Jira issues before human approval
+- File from a triage label, or when the scorer decision does not allow side bug
 - “Heal” a confirmed product defect by changing the test to pass
 - Reference a hardcoded local clone path or admin email in the template (v1)—always use env-driven host and role labels
 

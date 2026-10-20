@@ -1,21 +1,21 @@
 ---
 name: self-heal
-description: Repairs drifted Playwright locators after a UI change — patch the POM, re-run unchanged assertions, open a PR. Use when the build is red because a locator broke, fix the drifted selector, the test broke after a UI change, or heal the suite. Use ONLY after triage classifies the red run as a test issue (drift/locator drift); NEVER for a real app bug — route those to bug-reporter instead.
+description: Repairs drifted Playwright locators after a UI change — patch the POM, re-run unchanged assertions, open a PR. Use when the build is red because a locator broke, fix the drifted selector, the test broke after a UI change, or heal the suite. Use ONLY when scripts/score-evidence.ts returns act with side drift, or escalate and a human approval file exists; NEVER from a triage label — route act with side bug to bug-reporter instead.
 ---
 
 # Self-heal (locator drift)
 
-Repair a **single** drifted locator in a page object after triage confirms test issue (drift). Assertions in `tests/` stay unchanged; the PR proves green with a POM-only diff.
+Repair a **single** drifted locator in a page object after the scorer returns act on side drift, or escalate with a human approval file. Assertions in `tests/` stay unchanged; the PR proves green with a POM-only diff.
 
 ## Prerequisite
 
-A completed triage diagnosis classified **test issue (drift)** — see [`ci-failure-triage`](../ci-failure-triage/SKILL.md).
+The stdout of `npx tsx scripts/score-evidence.ts --verify-only .test-artifacts/evidence/current.json`. A triage label is not a prerequisite.
 
-| Classification | Action |
-|----------------|--------|
-| Real app bug | Stop → [`jira-bug-reporter`](../jira-bug-reporter/SKILL.md) |
-| Missing or ambiguous triage | Stop → finish triage first; do not heal |
-| Test issue (drift) | Proceed with this skill |
+| Decision | Action |
+|----------|--------|
+| `act` and side `drift` | Proceed with this skill |
+| `escalate`, and `.test-artifacts/approvals/<decisionId>.json` exists | Proceed with this skill. That file is created by a human, by hand |
+| Anything else | Stop. Do not heal |
 
 ## Steps
 
@@ -39,7 +39,7 @@ Stop healing and escalate to the human (or re-triage) when:
 ## Self-heal: locator drift
 
 - **CI run:** `<run id or link>`
-- **Triage:** test issue (drift) — <one-line cause from triage>
+- **Decision:** `<decision>` side `<side>` score `<score>` rule `<rule>` id `<decisionId>`
 - **Spec:** `tests/...` (assertions unchanged)
 - **POM:** `pages/...`
 
@@ -61,7 +61,7 @@ Stop healing and escalate to the human (or re-triage) when:
 
 | Do | Don't |
 |----|--------|
-| Heal only after triage says **drift** | Heal a confirmed **app bug** (use bug-reporter) |
+| Heal only on scorer **act** + side **drift**, or **escalate** with an approval file | Heal from a triage label, or on **act** + side **bug** (use bug-reporter) |
 | Patch **one** locator in `pages/` per PR | Edit `tests/` assertions, tags, or skips to go green |
 | Re-discover with **role + accessible name** on `APP_URL` | Invent labels from screenshots or memory |
 | Keep locators **narrow and role-based** | Add CSS/XPath or `.or()` / loose matchers to “make it pass” |
