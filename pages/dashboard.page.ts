@@ -13,6 +13,8 @@ export class DashboardPage {
   readonly inviteCoparentButton: Locator;
   readonly addChildButton: Locator;
   readonly childFirstNameInput: Locator;
+  readonly birthYearInput: Locator;
+  readonly childRemoveButtons: Locator;
   readonly enablePushRemindersButton: Locator;
 
   constructor(private readonly page: Page) {
@@ -30,6 +32,14 @@ export class DashboardPage {
     this.addChildButton = page.getByRole('button', { name: 'Add child' });
     this.childFirstNameInput = page.getByRole('textbox', {
       name: "Child's first name",
+    });
+    this.birthYearInput = page.getByRole('spinbutton', {
+      name: 'Birth year',
+      exact: true,
+    });
+    this.childRemoveButtons = page.getByRole('button', {
+      name: 'remove',
+      exact: true,
     });
     this.enablePushRemindersButton = page.getByRole('button', {
       name: 'Enable push reminders',
@@ -56,6 +66,11 @@ export class DashboardPage {
   async openInviteCoparent(): Promise<InviteCoparentPanelComponent> {
     await this.inviteCoparentButton.click();
     return new InviteCoparentPanelComponent(this.page);
+  }
+
+  /** Submits the inline add-child form. Does not fill any fields. */
+  async submitAddChild(): Promise<void> {
+    await this.addChildButton.click();
   }
 
   /** Opens the avatar picker for a child on the dashboard. */
