@@ -66,6 +66,7 @@ Add a row only when the instructor confirms a defect; mark the test with `test.f
 
 | AQPBT key | Symptom | Workaround in tests |
 |-----------|---------|---------------------|
+| AQPBT-16 | Empty Add child submission does not focus Birth year | `test.fail` on the AC5 spec; assertions stay |
 
 ## Output
 
