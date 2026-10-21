@@ -13,7 +13,7 @@ export class CommunitiesPage {
       name: 'Your communities',
       level: 2,
     });
-    this.createGroupLink = page.getByRole('link', { name: 'P31 drifted create-group link' });
+    this.createGroupLink = page.getByRole('link', { name: '+ Create group' });
   }
 
   /** Opens the communities index. */
