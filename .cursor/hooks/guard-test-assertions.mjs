@@ -148,6 +148,37 @@ function deny(event, filePath, beforeCount, afterCount) {
   process.exit(2);
 }
 
+function fullWriteContents(edits) {
+  for (const edit of edits) {
+    if (edit && edit.fullReplace && typeof edit.new_string === 'string') {
+      return edit.new_string;
+    }
+  }
+  return null;
+}
+
+function readExistingTest(resolved, filePath, event, edits) {
+  if (!fs.existsSync(resolved)) {
+    if (event === 'preToolUse' && fullWriteContents(edits) !== null) {
+      return '';
+    }
+    console.error(`guard-test-assertions: file not found — ${filePath}`);
+    process.exit(1);
+  }
+
+  try {
+    if (!fs.statSync(resolved).isFile()) {
+      console.error(`guard-test-assertions: unreadable file — ${filePath}`);
+      process.exit(1);
+    }
+    return fs.readFileSync(resolved, 'utf8');
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : 'unreadable';
+    console.error(`guard-test-assertions: unreadable file — ${filePath}: ${detail}`);
+    process.exit(1);
+  }
+}
+
 function main() {
   const payload = readHookInput();
   const { event, filePath, edits } = normalizeHookContext(payload);
@@ -160,12 +191,7 @@ function main() {
   }
 
   const resolved = path.resolve(filePath);
-  if (!fs.existsSync(resolved)) {
-    console.error(`guard-test-assertions: file not found — ${filePath}`);
-    process.exit(1);
-  }
-
-  const onDiskContent = fs.readFileSync(resolved, 'utf8');
+  const onDiskContent = readExistingTest(resolved, filePath, event, edits);
   let beforeCount;
   let afterCount;
 
