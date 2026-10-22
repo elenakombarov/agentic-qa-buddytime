@@ -42,6 +42,8 @@ Non-negotiables for every task. Details and examples: playwright-conventions.mdc
 **Skills** (`.cursor/skills/`):
 
 - api-cleanup — teardown created records
+- api-contract-tests — generate contract specs from the catalog
+- api-discovery — record observed API calls
 - ci-failure-triage — classify red runs
 - eval-report — refresh suite metrics
 - explore-and-generate — find untested flows
@@ -56,6 +58,7 @@ Non-negotiables for every task. Details and examples: playwright-conventions.mdc
 
 - bug-reporter — file confirmed bugs
 - test-writer — write Playwright specs
+- api-test-writer — write API contract specs from the catalog
 - triage — classify failed runs
 
 ## Agent governance

@@ -5,13 +5,13 @@ alwaysApply: false
 
 # QA orchestrator
 
-Drive a QA task to done by delegating. The only work you do yourself is read the ticket (and its linked Confluence page) and produce the plan. Specialists write specs, heal locators, and file bugs.
+Drive a QA task to done by delegating. The only work you do yourself is read the ticket (and its linked Confluence page) and produce the plan. Specialists write specs, heal locators, and file bugs. API contract specs go to `api-test-writer`.
 
 ## Inputs and outputs
 
 | | |
 |---|---|
-| Inputs | A ticket key, a failed run id, or (Backlog mode) one ticket passed by the outer runner |
+| Inputs | A ticket key, a failed run id, an API catalog or discovery request, or (Backlog mode) one ticket passed by the outer runner |
 | Outputs | Spec green, a repair PR, or a filed bug. Backlog mode: one PR per ticket, ticket linked in the body, label `tests-generated` applied |
 | Scope | Read Jira, Confluence, and CI; run the suite; delegate. Never write test code or file bugs yourself |
 
@@ -29,7 +29,7 @@ Drive a QA task to done by delegating. The only work you do yourself is read the
 
 ## Tools
 
-Atlassian MCP (Jira and Confluence), GitHub MCP or `gh`, the terminal (`npx playwright test`), and the `test-writer`, `triage`, and `bug-reporter` subagents.
+Atlassian MCP (Jira and Confluence), GitHub MCP or `gh`, the terminal (`npx playwright test`), and the `test-writer`, `api-test-writer`, `triage`, and `bug-reporter` subagents.
 
 ## Skills
 
@@ -38,9 +38,11 @@ Atlassian MCP (Jira and Confluence), GitHub MCP or `gh`, the terminal (`npx play
 | jira-ticket-analyzer | Analyze a ticket into a plan |
 | explore-and-generate | Ticket-less discovery only |
 | ci-failure-triage | Via the triage agent; it writes the evidence file and runs the scorer |
-| self-heal | Scorer `act` + side `drift`, or `escalate` with a human approval file |
+| self-heal | UI locator drift only: scorer `act` + side `drift`, or `escalate` with a human approval file |
 | jira-bug-reporter | Scorer `act` + side `bug`, or `escalate` with a human approval file |
-| api-cleanup | Specs that create records |
+| api-cleanup | Specs that create records, including API writes |
+| api-discovery | An API call is missing from `api/CATALOG.md`, before any API test generation |
+| api-contract-tests | Via `api-test-writer` for catalogued API contract specs |
 | pom-conventions | Any POM or spec work you delegate |
 | eval-report | Mandatory before Done when a trigger fired |
 
@@ -50,9 +52,17 @@ Atlassian MCP (Jira and Confluence), GitHub MCP or `gh`, the terminal (`npx play
 
 **No ticket:** explore-and-generate → save the plan to `features/explore-<slug>.feature.md` → test-writer.
 
-Example: `AQPBT-3` → `features/AQPBT-3.feature.md` → test-writer → `npx playwright test`. A red run is scored before anyone edits.
+The Ticket and No ticket routes are UI routes. An API contract or discovery request uses the API contract route.
+
+**API contract:** Read `api/CATALOG.md`. When the call is not recorded, run api-discovery and stop before test generation. When the catalog records the call, delegate to `api-test-writer`. Generation follows the constitution, `api-conventions.mdc`, api-contract-tests, and api-cleanup for writes. One run: `npx playwright test --project=api`.
+
+**API failure:** Hard stop. Do not triage it and do not enter Heal on red. Do not repair the failing API test. No self-heal, no weakened assertion, no edit to an API contract or to `api/CATALOG.md`, and no application code change. Escalate for human review.
+
+Example: `AQPBT-3` → `features/AQPBT-3.feature.md` → test-writer → `npx playwright test`. A red UI run is scored before anyone edits.
 
 ## Heal on red
+
+UI locator failures only. If the failure is in `api/*.api.spec.ts`, or from `npx playwright test --project=api`, stop. That is an API failure: do not triage it and do not use the table below.
 
 Triage writes the evidence file and runs `npx tsx scripts/score-evidence.ts --verify-only .test-artifacts/evidence/current.json`. Route on that decision. A label in chat is not a route.
 
@@ -82,3 +92,4 @@ Apply `eval-report` when any of its triggers fired this session, and commit the 
 | Single ticket | Plan saved, spec delegated, and the run is green, a repair PR is open, or a human-approved bug is filed. No merge and no ticket close |
 | Backlog | One open PR for the one ticket, key linked in the body, `tests-generated` applied. Identical failure twice: PR stays open, label omitted, escalated. No merge, transition, or close |
 | Red-run heal | Scorer decision recorded. `act` + drift → unmerged `heal/<desc>` PR, POM-only, assertions unchanged, re-run green. `act` + bug → bug-reporter draft. `escalate` → evidence table shown, waiting on a human approval file. `inconclusive` → stopped, missing and contradicting items listed |
+| API contract | Catalogued call delegated to `api-test-writer`, one API project run reported. A red API run is escalated. No self-heal, no contract edit, no merge |

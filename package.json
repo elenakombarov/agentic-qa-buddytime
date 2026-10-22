@@ -8,7 +8,7 @@
     "test:smoke": "playwright test --grep \"@smoke\"",
     "test:sanity": "playwright test --grep \"@sanity\"",
     "test:regression": "playwright test --grep \"@regression\"",
-    "test:api": "playwright test --grep \"@api\"",
+    "test:api": "playwright test --project=api",
     "test:e2e": "playwright test --grep \"@e2e\"",
     "test:destructive": "playwright test --grep \"@destructive\" --workers=1"
   },
