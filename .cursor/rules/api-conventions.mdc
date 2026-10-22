@@ -1,0 +1,43 @@
+---
+description: BuddyTime API contract conventions for specs and API clients.
+globs: api/**,support/api/**
+alwaysApply: false
+---
+
+API contract conventions for this repository. The constitution remains authoritative. Locator and page-object rules stay in `playwright-conventions.mdc` and `pom-conventions`. Cleanup procedure stays in the `api-cleanup` skill.
+
+## 1. Scope
+
+API contract specs live under `api/` as `*.api.spec.ts`. Import `test` and `expect` from `./fixtures`, so `mainFamilyApi`, `altFamilyApi`, and `trackRecord` stay on the cleanup fixture.
+
+## 2. API project
+
+Use the existing Playwright project `api` (`testDir: ./api`, `testMatch: **/*.api.spec.ts`). It depends on `setup`. Run `npx playwright test --project=api`.
+
+## 3. Authentication
+
+`mainFamilyApi` is the authenticated context (`Authorization: Bearer` from `bt_token` in storage state). `unauthenticatedApi` is the signed-out context (no Authorization header). Use `altFamilyApi` only when the test needs the second family. Do not use the built-in `request` fixture as an authenticated context.
+
+## 4. Environment
+
+Call relative paths such as `/api/v1/me`. `baseURL` comes from `process.env.APP_URL`. Never hardcode a host, credential, or token.
+
+## 5. Contract evidence
+
+`api/CATALOG.md` is the current observed API reference. A status, path, or field type is observed only when that catalog records it from a response that was read. Types and comments in `support/api/` restate those observations; they are not a second source. Not Yet Tested rows, and anything the catalog does not mention, are assumptions. Assert observed behavior only. Do not invent an endpoint or a response field. Preserve a null the catalog recorded (`expectStringOrNull` for a string-or-null field). Do not turn an assumption into an assertion. This repo has no separate authoritative API document. If one is identified, name it and reconcile it with the catalog before changing a test.
+
+## 6. Helpers
+
+Reuse `readSignedIn`, `expectSignedOut`, and the shape helpers in `api/http.ts` when they match the catalogued call. `readSignedIn` expects 200 and `application/json; charset=utf-8`. `expectSignedOut` expects 401 and that same content type. Use the existing `support/api/` clients for a supported write (`createChild` expects 201). Do not assume every endpoint returns HTTP 200. Call `expectSignedOut` only when the catalog records that signed-out status.
+
+## 7. Test data and cleanup
+
+Follow the `api-cleanup` skill. Create a child only with `createTrackedChild` and unique data (`Date.now()`, or an existing factory). Stop when cleanup for that record type has not been verified. Do not introduce an untracked persistent record, and do not add an in-test delete for a tracked child.
+
+## 8. Tags
+
+Put exactly one `@api` tag on each API `test()`. Do not tag `test.describe()`. CI selects the `api` project, not the `@api` tag. `npm run test:api` is the same project selector. An `@api` tag on a file under `tests/` does not place that test in the `api` project.
+
+## 9. Safety
+
+Do not `route.fulfill` the endpoint under test. Do not weaken or delete an assertion to make a test pass. Do not change application behavior to satisfy a test.
