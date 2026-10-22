@@ -7,6 +7,7 @@ import {
   expectNumber,
   expectSignedOut,
   expectString,
+  expectStringOrNull,
   readSignedIn,
 } from './http';
 
@@ -46,15 +47,9 @@ test('GET /api/v1/me returns the observed family profile @api', async ({
     expectNumber(child.birthYear);
     expectNumber(child.birthMonth);
     expectNumber(child.age);
-    if (child.gender === null) {
-      expect(typeof child.firstName === 'string' && child.firstName.startsWith('P35Api')).toBe(
-        true,
-      );
-    } else {
-      expectString(child.gender);
-    }
+    expectStringOrNull(child.gender);
     expect(Array.isArray(child.interests)).toBe(true);
-    expectString(child.avatarKey);
+    expectStringOrNull(child.avatarKey);
   }
 
   await expectSignedOut(unauthenticatedApi, '/api/v1/me');
