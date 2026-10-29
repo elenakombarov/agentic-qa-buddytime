@@ -7,6 +7,8 @@ export type CreateChildRequestBody = {
   birthMonth: number;
   avatarKey: string;
   interests: string[];
+  /** Optional. Sending `"girl"` is stored as `"girl"`; the dashboard summary uses `Girl`. */
+  gender?: 'girl';
 };
 
 /** Observed 201 response body from POST `/api/v1/children`. */

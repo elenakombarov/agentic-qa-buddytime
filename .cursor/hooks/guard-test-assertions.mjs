@@ -129,6 +129,26 @@ function blockMessage(filePath, before, after) {
   );
 }
 
+function fullWriteContents(edits) {
+  for (const edit of edits) {
+    if (edit && edit.fullReplace && typeof edit.new_string === 'string') {
+      return edit.new_string;
+    }
+  }
+  return null;
+}
+
+function readExistingTest(resolved, filePath, event, edits) {
+  if (!fs.existsSync(resolved)) {
+    if (event === 'preToolUse' && fullWriteContents(edits) !== null) {
+      return '';
+    }
+    console.error(`guard-test-assertions: file not found — ${filePath}`);
+    process.exit(1);
+  }
+  return fs.readFileSync(resolved, 'utf8');
+}
+
 function allow(event) {
   if (event === 'preToolUse') {
     console.log(JSON.stringify({ permission: 'allow' }));
@@ -160,12 +180,7 @@ function main() {
   }
 
   const resolved = path.resolve(filePath);
-  if (!fs.existsSync(resolved)) {
-    console.error(`guard-test-assertions: file not found — ${filePath}`);
-    process.exit(1);
-  }
-
-  const onDiskContent = fs.readFileSync(resolved, 'utf8');
+  const onDiskContent = readExistingTest(resolved, filePath, event, edits);
   let beforeCount;
   let afterCount;
 

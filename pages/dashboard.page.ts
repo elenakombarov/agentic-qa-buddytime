@@ -14,6 +14,7 @@ export class DashboardPage {
   readonly addChildButton: Locator;
   readonly childFirstNameInput: Locator;
   readonly enablePushRemindersButton: Locator;
+  readonly myKidsCount: Locator;
 
   constructor(private readonly page: Page) {
     this.header = new HeaderComponent(page);
@@ -34,11 +35,41 @@ export class DashboardPage {
     this.enablePushRemindersButton = page.getByRole('button', {
       name: 'Enable push reminders',
     });
+    this.myKidsCount = page
+      .getByText('My Kids', { exact: true })
+      .locator('..')
+      .locator('div')
+      .first();
   }
 
   /** Opens the signed-in home dashboard. */
   async goto(): Promise<void> {
     await this.page.goto(AppRoute.Dashboard);
+  }
+
+  /**
+   * The family-list row for one child.
+   * @param childSummary Visible summary, for example "Mia, 7 · Girl".
+   */
+  childRow(childSummary: string): Locator {
+    return this.page
+      .locator('div')
+      .filter({ has: this.page.getByText(childSummary, { exact: true }) })
+      .filter({
+        has: this.page.getByRole('button', { name: 'remove', exact: true }),
+      })
+      .filter({ hasNot: this.page.getByRole('button', { name: 'Add child' }) })
+      .last();
+  }
+
+  /**
+   * Removes one child from the family list.
+   * @param childSummary Visible summary, for example "Mia, 7 · Girl".
+   */
+  async removeChild(childSummary: string): Promise<void> {
+    await this.childRow(childSummary)
+      .getByRole('button', { name: 'remove', exact: true })
+      .click();
   }
 
   /** Starts a new playdate from the dashboard CTA. */
