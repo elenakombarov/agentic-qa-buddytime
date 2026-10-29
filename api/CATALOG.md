@@ -21,26 +21,46 @@ A GET is safe for tests. A write is safe only when its cleanup was also observed
 | POST | `/api/v1/children` | Dashboard | Authorization Bearer (same signed-in session) | 201 | `firstName` string, `birthYear` number, `birthMonth` number, `interests` array (empty in the observed request). `gender` and `avatarKey` were not sent. | Object. `id` string, `firstName` string, `birthYear` number, `birthMonth` number, `age` number, `gender` null, `interests` array (empty), `avatarKey` null. | Yes. The matching `DELETE /api/v1/children/{id}` for this same child returned 204, and the child no longer appeared. | Executed |
 | DELETE | `/api/v1/children/{id}` | Dashboard | Authorization Bearer (same signed-in session) | 204 | Empty | Empty body | Yes. This was the cleanup for the child created above. The dashboard no longer showed that child. A following `GET /api/v1/me` did not include the test first name. The children that were already on the family remained. | Executed |
 
+## Authorization (two families)
+
+A disposable child was created with `POST /api/v1/children` as the main family, then the calls below were sent. The create client accepts only status 201, and both creates continued. Response bodies on the rejected deletes were not read. Child ids, names, and tokens are not recorded.
+
+- executed (observed): `DELETE /api/v1/children/{id}` as the second family, for a child the main family had just created. Status 404. Content-Type `application/json; charset=utf-8`. The body was non-empty.
+- executed (observed): `GET /api/v1/me` as the main family after that delete. Status 200. Content-Type `application/json; charset=utf-8`. That child id was still in `family.children`.
+- executed (observed): `GET /api/v1/me` as the second family after that delete. Status 200. Content-Type `application/json; charset=utf-8`. That child id was not in `family.children`.
+- executed (observed): `DELETE /api/v1/children/{id}` with no Authorization header, for a second child the main family had just created. Status 401. Content-Type `application/json; charset=utf-8`. The body was non-empty.
+- executed (observed): `GET /api/v1/me` as the main family after that unsigned delete. Status 200. Content-Type `application/json; charset=utf-8`. That child id was still in `family.children`.
+
+Not yet tested:
+
+- Fields inside the 404 and 401 delete bodies. Those bodies were not read.
+- `POST /api/v1/auth/login` and `POST /api/v1/children` with no token. Those requests were not sent.
+- The main family deleting a child that belongs to the second family.
+- The owning family deleting an unknown child id. The 404 above was the second family's token against a child that still existed for the owner. The owner's own delete of their child remains the 204 row in the table.
+- A wrong or expired token. Only a missing token was sent.
+- A 403 on this delete. That status was not observed. The only delete statuses observed in this section are 404 for the second family and 401 with no token.
+- Cross-family or unsigned calls other than this child delete.
+
 ## Not Yet Tested
 
 - Pagination. No page, cursor, or limit parameter was observed. `days=21` and `filter=upcoming` were the only queries seen.
-- Error response formats. No application 4xx or 5xx JSON body was observed.
+- Error response formats. The 404 and 401 child-delete bodies in Authorization (two families) were not read. No other application 4xx or 5xx JSON body was observed.
 - Rate limits. No 429 and no rate-limit header was observed.
-- Error response bodies. Each safe GET without a token returned 401 with content type `application/json; charset=utf-8`. The body was not inspected.
-- Behavior of login, child create, and child delete without a token. Those requests were not sent.
+- Error response bodies. Each safe GET without a token returned 401 with content type `application/json; charset=utf-8`. The body was not inspected. The unsigned child-delete body was also not read.
+- Behavior of login and child create without a token. Those requests were not sent. Unsigned child delete is recorded under Authorization (two families).
 - `GET /api/v1/playdates/{id}/ics`. The path was present on playdate `icsUrl` values and was not requested.
 - `googleCalendarUrl` values point at Google Calendar and were not requested.
 - Item fields for `GET /api/v1/playdates?filter=upcoming`. The body was an empty array.
 - Other values of `filter` and `days`.
 - `POST /api/v1/children` with `gender`, `avatarKey`, or a non-empty `interests` array.
-- `DELETE /api/v1/children/{id}` returning 404. Only 204 was observed.
+- The owning family calling `DELETE /api/v1/children/{id}` for an unknown id. That request was not sent. A 404 was observed only for the second family's delete in Authorization (two families).
 - Object fields inside `GET /api/v1/connections` `communities`. The observed arrays were empty.
 - Whether `birthMonth` on `GET /api/v1/me` children can be null, and whether `interests` items on those children can be non-empty. Calendar's `GET /api/v1/me` had numeric birth months and empty interest arrays. `gender` and `avatarKey` were string or null on that response.
 - Whether event `endsAt`, `communityId`, and `communityName` can be non-null. Only null was observed, including on the Calendar page load.
 - Whether `connection.canRequestAt` can be non-null. Only null was observed.
 - Whether playdate `cancelledAt` can be null. Only strings were observed.
 - AppRoute pages not opened: Landing, Sign up, Forgot password, Communities new, Playdates new, Admin.
-- Write calls other than login and the one child create/delete. No edits, invites, approvals, or deletes of existing data.
+- Write calls other than login, the owner child create/delete, and the rejected deletes in Authorization (two families). No edits, invites, or approvals were sent. No existing children were deleted.
 
 ## Discovery limitations
 

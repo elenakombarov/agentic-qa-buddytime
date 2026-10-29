@@ -1,9 +1,16 @@
 import type { APIRequestContext } from '@playwright/test';
 import { test as cleanupTest, expect } from '../fixtures/cleanup.fixture';
+import { createApiContextForOwner } from '../support/api-client';
 
 type ApiFixtures = {
   /** No Authorization header. baseURL comes from APP_URL. */
   unauthenticatedApi: APIRequestContext;
+  /** Main family. Authorization from that family's saved session. */
+  apiMain: APIRequestContext;
+  /** Second family. Built the same way as apiMain, for the alt owner. */
+  apiAlt: APIRequestContext;
+  /** No Authorization header. Same context as unauthenticatedApi. */
+  apiAnonymous: APIRequestContext;
 };
 
 /**
@@ -21,6 +28,28 @@ export const test = cleanupTest.extend<ApiFixtures>({
     const context = await playwright.request.newContext({ baseURL: appUrl });
     await use(context);
     await context.dispose();
+  },
+
+  apiMain: async ({}, use) => {
+    const context = await createApiContextForOwner('main');
+    try {
+      await use(context);
+    } finally {
+      await context.dispose();
+    }
+  },
+
+  apiAlt: async ({}, use) => {
+    const context = await createApiContextForOwner('alt');
+    try {
+      await use(context);
+    } finally {
+      await context.dispose();
+    }
+  },
+
+  apiAnonymous: async ({ unauthenticatedApi }, use) => {
+    await use(unauthenticatedApi);
   },
 });
 
