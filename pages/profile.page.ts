@@ -50,6 +50,14 @@ export class ProfilePage {
     await this.page.goto(AppRoute.Profile);
   }
 
+  /**
+   * Types a family name and does not save it.
+   * @param familyName Value for the Family name textbox.
+   */
+  async fillFamilyName(familyName: string): Promise<void> {
+    await this.familyNameInput.fill(familyName);
+  }
+
   /** Opens privacy & safety settings (toast-only in current build). */
   async openPrivacySafety(): Promise<void> {
     await this.privacySafetyButton.click();

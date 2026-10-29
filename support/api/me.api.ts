@@ -15,6 +15,7 @@ export type MeFamilyChild = {
 /** Observed GET `/api/v1/me` JSON body (partial). */
 export type MeResponseBody = {
   family: {
+    name: string;
     children: MeFamilyChild[];
   };
 };
