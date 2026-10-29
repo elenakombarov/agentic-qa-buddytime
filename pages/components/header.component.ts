@@ -17,6 +17,7 @@ export class HeaderComponent {
   readonly myProfileLink: Locator;
   readonly adminLink: Locator;
   readonly goPremiumButton: Locator;
+  readonly premiumComingSoonStatus: Locator;
   readonly banner: Locator;
   readonly notificationsButton: Locator;
   readonly logOutButton: Locator;
@@ -53,6 +54,9 @@ export class HeaderComponent {
     this.adminLink = this.navigation.getByRole('link', { name: 'Admin' });
     this.goPremiumButton = this.sidebar.getByRole('button', {
       name: /Go Premium/i,
+    });
+    this.premiumComingSoonStatus = page.getByRole('status').filter({
+      hasText: /^Premium — coming soon! ✨$/,
     });
     this.banner = page.getByRole('banner');
     this.notificationsButton = this.banner.getByRole('button', {
