@@ -1,0 +1,51 @@
+[
+  {
+    "endpoint": "GET /api/v1/me",
+    "who": "alt",
+    "status": 200,
+    "outcome": "HELD",
+    "evidence": "status=200; bodyRead=true; mainProfileKnown=true; containsFamilyId=false; containsParentId=false; containsParentEmail=false; containsDisposableChildId=false; containsDisposableChildName=false; containsPreexistingMainChild=false; ownerFollowUp=true; ownerUnchanged=true"
+  },
+  {
+    "endpoint": "GET /api/v1/me",
+    "who": "anonymous",
+    "status": 401,
+    "outcome": "HELD",
+    "evidence": "status=401; bodyRead=true; mainProfileKnown=true; containsFamilyId=false; containsParentId=false; containsParentEmail=false; containsDisposableChildId=false; containsDisposableChildName=false; containsPreexistingMainChild=false; ownerFollowUp=true; ownerUnchanged=true"
+  },
+  {
+    "endpoint": "GET /api/v1/availability",
+    "who": "alt",
+    "status": 200,
+    "outcome": "HELD",
+    "evidence": "status=200; bodyRead=true; mainHasAvailabilityId=true; containsMainAvailabilityId=false; containsParentEmail=false; containsDisposableChildId=false; containsDisposableChildName=false; ownerFollowUp=true; ownerUnchanged=true"
+  },
+  {
+    "endpoint": "GET /api/v1/events",
+    "who": "alt",
+    "status": 200,
+    "outcome": "HELD",
+    "evidence": "status=200; bodyRead=true; mainHasEventId=true; containsMainEventId=false; containsRsvpValue=false; containsDisposableChildId=false; containsDisposableChildName=false; containsPreexistingMainChild=false; preexistingChildClear=true; ownerFollowUp=true; ownerUnchanged=true"
+  },
+  {
+    "endpoint": "DELETE /api/v1/children/{id}",
+    "who": "alt",
+    "status": 404,
+    "outcome": "HELD",
+    "evidence": "status=404; bodyRead=true; ownerParsed=true; childStillPresent=true; childRemoved=false; containsParentEmail=false; containsFamilyId=false; containsPreexistingMainChild=false; containsRsvpValue=false; containsDisposableChildName=false; ownerFollowUp=true; ownerUnchanged=true"
+  },
+  {
+    "endpoint": "DELETE /api/v1/children/{id}",
+    "who": "anonymous",
+    "status": 401,
+    "outcome": "HELD",
+    "evidence": "status=401; bodyRead=true; ownerParsed=true; childStillPresent=true; childRemoved=false; containsParentEmail=false; containsFamilyId=false; containsPreexistingMainChild=false; containsRsvpValue=false; containsDisposableChildName=false; ownerFollowUp=true; ownerUnchanged=true"
+  },
+  {
+    "endpoint": "GET /api/v1/communities/{id}",
+    "who": "alt",
+    "status": 404,
+    "outcome": "HELD",
+    "evidence": "status=404; bodyRead=true; containsParentEmail=false; containsAvailabilityId=false; containsRsvpValue=false; ownerFollowUp=true; ownerUnchanged=true"
+  }
+]

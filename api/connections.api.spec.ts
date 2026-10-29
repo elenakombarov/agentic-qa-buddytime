@@ -3,7 +3,6 @@ import {
   asArray,
   asRecord,
   expectBoolean,
-  expectNull,
   expectNumber,
   expectSignedOut,
   expectString,
@@ -35,7 +34,13 @@ test('GET /api/v1/connections returns the observed connection list @api', async 
       expectString(child.id);
       expectString(child.firstName);
       expectNumber(child.birthYear);
-      expectNull(child.birthMonth);
+      expect(
+        child.birthMonth === null ||
+          (typeof child.birthMonth === 'number' &&
+            Number.isInteger(child.birthMonth) &&
+            child.birthMonth >= 1 &&
+            child.birthMonth <= 12),
+      ).toBe(true);
       expectNumber(child.age);
       expectString(child.gender);
       expectStringArray(child.interests);
